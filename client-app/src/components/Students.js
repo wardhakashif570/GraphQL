@@ -1,6 +1,21 @@
 import './App.css';
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, useMutation } from '@apollo/client';
+
+const ADD_Student = gql`
+
+
+  mutation AddStudent($id: Int!,$name: String!,$age: Int!,$email: String!) {
+    addStudent(
+      input:{id:$id,name:$name,email:$email,age:$age}
+    ) {
+      id
+      name
+      
+    }
+  }
+`;
+
 
 const GET_STUDENTS = gql`
   query GetAllStudent {
@@ -16,6 +31,8 @@ const GET_STUDENTS = gql`
 function Students() {
 
     const { loading, error, data } = useQuery(GET_STUDENTS);
+
+    const [addstd] = useMutation(ADD_Student);
     if (loading)
         return <h1>Loading....</h1>
 
@@ -51,6 +68,13 @@ function Students() {
                     }
                 </tbody>
             </table>
+
+
+            <button onClick={() =>
+                addstd({
+                    variables:
+                        { id: 6, name: "Mustafa", age: 14, email: "Musta@gmail.com" }
+                })}>Add Student</button>
         </div>
 
     );

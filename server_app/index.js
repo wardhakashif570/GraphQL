@@ -1,6 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server');
 
-const students = [
+let students = [
     {
         "id": 1,
         "name": "Wardha",
@@ -28,11 +28,28 @@ const students = [
 
 const resolvers = {
     Query: {
-        students: () =>{
-        //write business logic here
-        return students
-        },
+        students: () => students,
     },
+    Mutation: {
+        addStudent: (e, { input }) => {
+            console.log(input);
+            students.push(
+                {
+                    name: input.name,
+                    age: input.age,
+                    email: input.email,
+                    id: input.id
+
+                }
+            )
+            return {
+                name: input.name,
+                age: input.age,
+                email: input.email,
+                id: input.id
+            }
+        }
+    }
 };
 
 
@@ -45,16 +62,25 @@ const typeDefs = gql`
     age:Int
   }
 
+  input StdInput {
+    id:Int
+    name: String
+    email: String
+    age:Int
+  }
+
 type Query {
     students: [Student]
   }
-`
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
+type Mutation{
+    addStudent(input:StdInput):Student
+}
+`;
+
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// The `listen` method launches a web server.
+
 server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });
